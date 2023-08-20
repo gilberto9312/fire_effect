@@ -70,8 +70,30 @@ fn draw_next_frame(screen: &mut [Color],fire_buffer: &mut[u8], pal: &[Color], rn
     
     draw_palette(screen, pal);
     fill_bottom_with_random_ashes(fire_buffer, rng);
+    calculate_next_fire_frame(fire_buffer);
     convert_fire_buffer_to_screen(fire_buffer, pal, screen)
     
+}
+
+fn calculate_next_fire_frame(fire_buffer: &mut[u8]) {
+
+    let mut old_fire_buffer = [0u8; 400*300];
+    old_fire_buffer.clone_from_slice(fire_buffer);
+
+    for y in 0..299 {
+        for x in 1..399 {
+            let i = (y*400 + x) as usize;
+            fire_buffer[i] = ((
+                    10  * old_fire_buffer[ i - 1 ] as u64
+                +   20  * old_fire_buffer[ i + 0 ] as u64
+                +   10  * old_fire_buffer[ i + 1 ] as u64
+                +   160 * old_fire_buffer[ i - 1 + 400 ] as u64
+                +   320 * old_fire_buffer[ i + 0 + 400 ] as u64
+                +   160 * old_fire_buffer[ i + 1 + 400 ] as u64
+            ) / 680 ) as u8;
+        }
+    }
+
 }
 
 fn convert_fire_buffer_to_screen(fire_buffer: &mut[u8], pal: &[Color], screen: &mut [Color]) {
