@@ -9,7 +9,8 @@ use raylib_ffi::{
     enums,
     LoadTextureFromImage,
     Texture2D,
-    DrawTexture
+    DrawTexture,
+    UpdateTexture
 };
 use raylib_ffi::colors::WHITE;
 use std::ffi::c_void;
@@ -58,6 +59,12 @@ fn draw_texture(texture: Texture2D, pos_x: i32, pos_y: i32, tint: Color) {
     }
 }
 
+fn update_texture(texture: Texture2D, data: &[Color] ) {
+    unsafe {
+        UpdateTexture(texture, data.as_ptr() as *const c_void)
+    }
+}
+
 fn main() {
    
     init_gui();
@@ -72,10 +79,13 @@ fn main() {
         mipmaps: 1
     };
 
-     let screen_buffer_texture = load_texture_from_image(screen_buffer);
+    let screen_buffer_texture = load_texture_from_image(screen_buffer);
+    let pixel = &mut screen_buffer_data[200*400 + 200];
+    *pixel = Color{r:0xFF, g:0, b:0, a: 0xFF};
 
     while ! window_shold_close() {
         begin_drawing();
+        update_texture(screen_buffer_texture, &screen_buffer_data);
         draw_texture(screen_buffer_texture, 0,0, WHITE);
         end_drawing()
     }
