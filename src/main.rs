@@ -65,6 +65,36 @@ fn update_texture(texture: Texture2D, data: &[Color] ) {
     }
 }
 
+fn draw_next_frame(screen: &mut [Color], pal: &[Color]) {
+    for i in 0..pal.len() {
+        let init = i*400 + 50;
+        let pixel = &mut screen[init..(init+4)];
+        pixel[0] = pal[i];
+        pixel[1] = pal[i];
+        pixel[2] = pal[i];
+        pixel[3] = pal[i];
+
+    }
+    
+}
+
+fn generate_palette() ->[Color; 256] {
+    let mut pal = [Color{r:0,g:0,b:0,a:0xFF}; 256]; 
+    for i in 0..=84 {
+        pal[i].r = (i * (0xFF / 85)) as u8;
+    }
+    for i in 85..=169 {
+        pal[i].r = 255;
+        pal[i].g = ((i - 85) * (0xFF / 85)) as u8;
+    }
+    for i in 170..=255 {
+        pal[i].r = 255;
+        pal[i].g = 255;
+        pal[i].b = ((i - 85) * (0xFF / 85)) as u8;
+    }
+    pal
+}
+
 fn main() {
    
     init_gui();
